@@ -8,16 +8,20 @@
 import Foundation
 
 enum Router {
-    case trendingMovies
+    case nowPlaying
     case movieDetails
+    case downloadImage(path: String)
 
     var httpMethod: String {
         switch self {
-            case .trendingMovies:
-                return "GET"
+            case .nowPlaying:
+                return Constants.httpMethodGet
 
             case .movieDetails:
-                return "POST"
+                return Constants.httpMethodPost
+
+            case .downloadImage:
+                return Constants.httpMethodGet
         }
     }
 
@@ -27,17 +31,20 @@ enum Router {
 
     var endPoint: String {
         switch self {
-            case .trendingMovies:
-                return "GET"
+            case .nowPlaying:
+                return "https://api.themoviedb.org/3/movie/now_playing?language=pt-BR&region=BR"
 
             case .movieDetails:
                 return "POST"
+
+            case let .downloadImage(path):
+                return Constants.basicURL + path
         }
     }
 
     var data: Data? {
         switch self {
-            case .trendingMovies:
+            case .nowPlaying:
                 let postData = "Antoine van der Lee"
                         let jsonData = try? JSONEncoder().encode(postData)
                 return jsonData
@@ -46,6 +53,9 @@ enum Router {
                 let postData = "Antoine van der Lee"
                 let jsonData = try? JSONEncoder().encode(postData)
                 return jsonData
+
+            default:
+                return nil
         }
     }
 }

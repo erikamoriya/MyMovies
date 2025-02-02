@@ -8,17 +8,16 @@
 import Foundation
 
 protocol ServiceProtocol {
-    func getTrendingMovies(router: Router) async throws -> [Movie]
-    func getMovieDetails(router: Router, id: Int32) async throws -> Movie
+    func getNowPlaying(router: Router) async throws -> [Movie]
+    func getMovieDetails(router: Router, id: Int32) async throws -> Movie? // remover o nil
 }
 
-
 class Service: ServiceProtocol {
-    func getTrendingMovies(router: Router) async throws -> [Movie] {
-        <#code#>
+    func getNowPlaying(router: Router) async throws -> [Movie] {
+[]
     }
     
-    func getMovieDetails(router: Router, id: Int32) async throws -> Movie {
-        <#code#>
+    func getMovieDetails(router: Router, id: Int32) async throws -> Movie? {
+        nil
     }
 }
