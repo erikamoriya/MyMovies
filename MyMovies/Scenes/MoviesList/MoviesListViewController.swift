@@ -40,7 +40,7 @@ class MoviesListViewController: UIViewController {
 
     private func loadData() async {
         do {
-            let movies = try await service.getTrendingMovies(router: .trendingMovies)
+            let movies = try await service.getNowPlaying(router: .nowPlaying)
             moviesList.append(contentsOf: movies)
             myView.moviesList.reloadData()
         } catch {
@@ -59,7 +59,25 @@ extension MoviesListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        moviesList.dequeueReusableCell(withIdentifier: Constants.celIdentifier)
+        guard moviesList.count > indexPath.row else {
+            debugPrint("[MoviesListViewController] Error finding movie")
+            return UITableViewCell()
+        }
+//        let movieImage = moviesList[indexPath.row].image
+//        let movieName = moviesList[indexPath.row].name
+//        let movieDescription = moviesList[indexPath.row].synopsis
+//        let cellViewModel = MovieCellViewModel(movieImage: UI, movieName: <#String#>, movieDescription: <#String#>)
+//        let cellView = MovieCellView()
+//
+//
+//
+//        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.celIdentifier, for: indexPath)
+//            cell.contentView =
+//            return cell
+//
+//
+//
+//        moviesList.dequeueReusableCell(withIdentifier: Constants.celIdentifier)
 
     }
     

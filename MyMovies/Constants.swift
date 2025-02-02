@@ -9,7 +9,13 @@ import Foundation
 
 struct Constants {
 
+    // Layout
+    static let spacing: CGFloat = 24
+    static let cellHeight: CGFloat = 90
+    static let imageHeight: CGFloat = 50
+
     // Service
+    static let basicURL = "https://image.tmdb.org/t/p/w500/"
     static let httpMethodGet = "GET"
     static let httpMethodPost = "POST"
 
