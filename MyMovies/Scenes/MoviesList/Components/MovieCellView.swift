@@ -8,11 +8,13 @@
 import SnapKit
 import UIKit
 
-class MovieCellView: UIView {
+class MovieCellView: UITableViewCell {
 
     let movieImageView: UIImageView
     let movieName: UILabel
     let movieDescription: UILabel
+    let stackViewVertical: UIStackView
+    let stackViewHorizontal: UIStackView
 
     var viewModel: MovieCellViewModelProtocol? {
         didSet {
@@ -20,12 +22,14 @@ class MovieCellView: UIView {
         }
     }
 
-    init() {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         movieImageView = UIImageView()
         movieName = UILabel()
         movieDescription = UILabel()
+        stackViewVertical = UIStackView()
+        stackViewHorizontal = UIStackView()
 
-        super.init()
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureViews()
         addViews()
         buildConstraints()
@@ -52,40 +56,37 @@ class MovieCellView: UIView {
         movieName.translatesAutoresizingMaskIntoConstraints = false
         movieDescription.translatesAutoresizingMaskIntoConstraints = false
 
+        movieImageView.contentMode = .scaleAspectFit
+
         movieName.numberOfLines = 1
         movieDescription.numberOfLines = 0
+
+        stackViewVertical.axis = .vertical
+        stackViewHorizontal.axis = .horizontal
     }
 
     func addViews(){
-        addSubview(movieImageView)
-        addSubview(movieName)
-        addSubview(movieDescription)
+        stackViewHorizontal.addArrangedSubview(movieImageView)
+        stackViewHorizontal.addArrangedSubview(stackViewVertical)
+        stackViewVertical.addArrangedSubview(movieName)
+        stackViewVertical.addArrangedSubview(movieDescription)
+
+        addSubview(stackViewHorizontal)
     }
 
     func buildConstraints() {
         let spacing = Constants.spacing
 
-        self.snp.makeConstraints { make in
-            make.height.equalTo(Constants.cellHeight)
-        }
-
         movieImageView.snp.makeConstraints { make in
-            make.leading.equalTo(snp.topMargin).offset(spacing)
-            make.centerY.equalTo(snp.centerY)
-            make.height.equalTo(Constants.imageHeight)
+            make.width.height.equalTo(Constants.imageHeight)
         }
 
-        movieName.snp.makeConstraints { make in
-            make.top.equalTo(movieImageView.snp.top)
-            make.leading.equalTo(movieImageView.snp.leading).offset(spacing)
-            make.trailing.equalTo(snp.trailing).offset(-spacing)
-        }
-
-        movieDescription.snp.makeConstraints { make in
-            make.top.equalTo(movieName.snp.bottom).offset(spacing/2)
-            make.leading.equalTo(movieImageView.snp.leading).offset(spacing)
+        stackViewHorizontal.snp.makeConstraints { make in
+            make.top.equalTo(snp.top).offset(spacing)
+            make.leading.equalTo(snp.leading).offset(spacing)
             make.trailing.equalTo(snp.trailing).offset(-spacing)
             make.bottom.equalTo(snp.bottom).offset(-spacing)
+            make.height.equalTo(Constants.cellHeight)
         }
     }
 }

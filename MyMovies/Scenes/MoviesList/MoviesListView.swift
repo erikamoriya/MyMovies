@@ -13,7 +13,6 @@ class MoviesListView: UIView {
     let lastMovieImageView: UIImageView
     let lastMovieName: UILabel
     let moviesList: UITableView
-    private var imageHeight: Constraint?
 
     var viewModel: MoviesListViewModelProtocol? {
         didSet {
@@ -25,7 +24,7 @@ class MoviesListView: UIView {
         moviesList = list
         lastMovieName = UILabel()
         lastMovieImageView = UIImageView()
-        super.init()
+        super.init(frame: UIScreen.main.bounds)
         configureViews()
         addViews()
         buildConstraints()
@@ -44,7 +43,6 @@ class MoviesListView: UIView {
 
         lastMovieImageView.image = viewModel.lastMovieImage
         lastMovieName.text = viewModel.lastMovieName
-        imageHeight?.update(offset: viewModel.getImageHeight())
         layoutIfNeeded()
     }
 
@@ -52,8 +50,8 @@ class MoviesListView: UIView {
         lastMovieName.translatesAutoresizingMaskIntoConstraints = false
         lastMovieImageView.translatesAutoresizingMaskIntoConstraints = false
         moviesList.translatesAutoresizingMaskIntoConstraints = false
-
-        moviesList.register(UITableViewCell.self, forCellReuseIdentifier: Constants.celIdentifier)
+        lastMovieImageView.contentMode = .scaleAspectFit
+        moviesList.register(MovieCellView.self, forCellReuseIdentifier: Constants.celIdentifier)
     }
 
     func addViews(){
@@ -68,42 +66,21 @@ class MoviesListView: UIView {
         lastMovieImageView.snp.makeConstraints { make in
             make.top.equalTo(snp.topMargin).offset(spacing)
             make.centerX.equalTo(snp.centerX)
-            imageHeight = make.height.equalTo(60).constraint
+            make.height.equalTo(80)
         }
 
         lastMovieName.snp.makeConstraints { make in
             make.top.equalTo(lastMovieImageView.snp.bottom).offset(spacing/2)
             make.centerX.equalTo(snp.centerX)
-            make.leading.equalTo(snp.leading).offset(spacing)
-            make.trailing.equalTo(snp.trailing).offset(-spacing)
+            make.leading.greaterThanOrEqualTo(snp.leading).offset(spacing)
+            make.trailing.lessThanOrEqualTo(snp.trailing).offset(-spacing)
         }
 
         moviesList.snp.makeConstraints { make in
             make.top.equalTo(lastMovieName.snp.bottom).offset(spacing/2)
-            make.leading.equalTo(snp.leading).offset(spacing)
+            make.leading.equalTo(snp.leading)
             make.trailing.equalTo(snp.trailing).offset(-spacing)
             make.bottom.equalTo(snp.bottomMargin).offset(-spacing)
-
         }
-
-//        let lastMovieImageViewConstraints = [
-//            lastMovieImageView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: spacing),
-//            lastMovieImageView.centerXAnchor.constraint(equalTo: layoutMarginsGuide.centerXAnchor),
-//            imageHeight
-//        ]
-//        let lastMovieNameConstraints = [
-//            lastMovieName.topAnchor.constraint(equalTo: lastMovieImageView.bottomAnchor, constant: spacing/2),
-//            lastMovieName.centerXAnchor.constraint(equalTo: layoutMarginsGuide.centerXAnchor),
-//            lastMovieName.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: spacing),
-//            lastMovieName.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -spacing)
-//        ]
-//
-//        let moviesListConstraints = [
-//            moviesList.topAnchor.constraint(equalTo: lastMovieName.bottomAnchor, constant: spacing),
-//            moviesList.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: spacing),
-//            moviesList.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -spacing),
-//            moviesList.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -spacing)
-//
-//        ]
     }
 }

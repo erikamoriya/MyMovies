@@ -17,7 +17,8 @@ class MoviesListViewController: UIViewController {
     init(myView: MoviesListView = MoviesListView(), service: ServiceProtocol = Service()) {
         self.myView = myView
         self.moviesList = []
-        super.init()
+        self.service = service
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
@@ -26,21 +27,25 @@ class MoviesListViewController: UIViewController {
     }
 
     override func loadView() {
+        super.loadView()
         myView.moviesList.delegate = self
         myView.moviesList.dataSource = self
-
+        myView.backgroundColor = .white
         view = myView
-        super.loadView()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        Task {
+            await loadData()
+        }
     }
 
     private func loadData() async {
         do {
             let movies = try await service.getNowPlaying(router: .nowPlaying)
+            let viewModel = MoviesListViewModel(lastMovieImage: UIImage(systemName: Constants.movieImagePlaceholder) ?? UIImage(), lastMovieName: "teste")
+            myView.viewModel = viewModel
             moviesList.append(contentsOf: movies)
             myView.moviesList.reloadData()
         } catch {
@@ -50,36 +55,35 @@ class MoviesListViewController: UIViewController {
 }
 
 extension MoviesListViewController: UITableViewDelegate {
-
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        debugPrint("clicouuuuuuuuuuuuu")
+    }
 }
 
 extension MoviesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return moviesList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard moviesList.count > indexPath.row else {
+        guard
+            moviesList.count > indexPath.row,
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.celIdentifier, for: indexPath) as? MovieCellView
+        else {
             debugPrint("[MoviesListViewController] Error finding movie")
             return UITableViewCell()
         }
-//        let movieImage = moviesList[indexPath.row].image
-//        let movieName = moviesList[indexPath.row].name
-//        let movieDescription = moviesList[indexPath.row].synopsis
-//        let cellViewModel = MovieCellViewModel(movieImage: UI, movieName: <#String#>, movieDescription: <#String#>)
-//        let cellView = MovieCellView()
-//
-//
-//
-//        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.celIdentifier, for: indexPath)
-//            cell.contentView =
-//            return cell
-//
-//
-//
-//        moviesList.dequeueReusableCell(withIdentifier: Constants.celIdentifier)
+        let movieImage = moviesList[indexPath.row].downloadImage(service: service)
+        let movieName = moviesList[indexPath.row].name
+        let movieDescription = moviesList[indexPath.row].synopsis
+        let cellViewModel = MovieCellViewModel(
+            movieImage: movieImage,
+            movieName: movieName,
+            movieDescription: movieDescription
+        )
 
+        cell.viewModel = cellViewModel
+
+        return cell
     }
-    
-
 }

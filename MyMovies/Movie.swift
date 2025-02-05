@@ -12,7 +12,17 @@ struct Movie: Decodable {
     let synopsis: String
     let posterPath: String
 
-    func downloadImage(service: ServiceProtocol) -> UIImage {
+    enum CodingKeys: String, CodingKey {
+        case name = "title"
+        case synopsis = "overview"
+        case posterPath = "poster_path"
+    }
 
+    func downloadImage(service: ServiceProtocol) -> UIImage {
+        if let data = service.downloadImage(router: .downloadImage(path: posterPath)),
+            let image = UIImage(data: data) {
+            return image
+        }
+        return UIImage(systemName: Constants.movieImagePlaceholder) ?? UIImage()
     }
 }

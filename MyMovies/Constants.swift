@@ -21,4 +21,5 @@ struct Constants {
 
     // MoviesList
     static let celIdentifier = "movieCell"
+    static let movieImagePlaceholder = "movieclapper.fill"
 }
