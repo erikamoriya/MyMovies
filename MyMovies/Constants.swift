@@ -11,7 +11,7 @@ struct Constants {
 
     // Layout
     static let spacing: CGFloat = 24
-    static let cellHeight: CGFloat = 90
+    static let cellHeight: CGFloat = 200
     static let imageHeight: CGFloat = 50
 
     // Service
@@ -21,5 +21,5 @@ struct Constants {
 
     // MoviesList
     static let celIdentifier = "movieCell"
-    static let movieImagePlaceholder = "movieclapper.fill"
+    static let movieAttribuitionLogo = "TMDBlogo"
 }

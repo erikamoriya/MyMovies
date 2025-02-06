@@ -8,11 +8,9 @@
 import UIKit
 
 protocol MoviesListViewModelProtocol {
-    var lastMovieImage: UIImage { get }
-    var lastMovieName: String { get }
+    var attributionImage: UIImage { get }
 }
 
 struct MoviesListViewModel: MoviesListViewModelProtocol {
-    var lastMovieImage: UIImage
-    var lastMovieName: String
+    var attributionImage: UIImage = UIImage(named: Constants.movieAttribuitionLogo) ?? UIImage()
 }

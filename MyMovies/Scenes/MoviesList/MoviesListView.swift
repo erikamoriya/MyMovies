@@ -9,9 +9,7 @@ import SnapKit
 import UIKit
 
 class MoviesListView: UIView {
-
     let lastMovieImageView: UIImageView
-    let lastMovieName: UILabel
     let moviesList: UITableView
 
     var viewModel: MoviesListViewModelProtocol? {
@@ -22,9 +20,8 @@ class MoviesListView: UIView {
 
     init(list: UITableView = UITableView()) {
         moviesList = list
-        lastMovieName = UILabel()
         lastMovieImageView = UIImageView()
-        super.init(frame: UIScreen.main.bounds)
+        super.init(frame: .zero)
         configureViews()
         addViews()
         buildConstraints()
@@ -41,22 +38,20 @@ class MoviesListView: UIView {
             return
         }
 
-        lastMovieImageView.image = viewModel.lastMovieImage
-        lastMovieName.text = viewModel.lastMovieName
+        lastMovieImageView.image = viewModel.attributionImage
         layoutIfNeeded()
     }
 
     func configureViews() {
-        lastMovieName.translatesAutoresizingMaskIntoConstraints = false
         lastMovieImageView.translatesAutoresizingMaskIntoConstraints = false
         moviesList.translatesAutoresizingMaskIntoConstraints = false
         lastMovieImageView.contentMode = .scaleAspectFit
         moviesList.register(MovieCellView.self, forCellReuseIdentifier: Constants.celIdentifier)
+        backgroundColor = .white
     }
 
     func addViews(){
         addSubview(lastMovieImageView)
-        addSubview(lastMovieName)
         addSubview(moviesList)
     }
 
@@ -69,15 +64,8 @@ class MoviesListView: UIView {
             make.height.equalTo(80)
         }
 
-        lastMovieName.snp.makeConstraints { make in
-            make.top.equalTo(lastMovieImageView.snp.bottom).offset(spacing/2)
-            make.centerX.equalTo(snp.centerX)
-            make.leading.greaterThanOrEqualTo(snp.leading).offset(spacing)
-            make.trailing.lessThanOrEqualTo(snp.trailing).offset(-spacing)
-        }
-
         moviesList.snp.makeConstraints { make in
-            make.top.equalTo(lastMovieName.snp.bottom).offset(spacing/2)
+            make.top.equalTo(lastMovieImageView.snp.bottom).offset(spacing/2)
             make.leading.equalTo(snp.leading)
             make.trailing.equalTo(snp.trailing).offset(-spacing)
             make.bottom.equalTo(snp.bottomMargin).offset(-spacing)

@@ -63,6 +63,8 @@ class MovieCellView: UITableViewCell {
 
         stackViewVertical.axis = .vertical
         stackViewHorizontal.axis = .horizontal
+        stackViewHorizontal.spacing = 12
+        stackViewVertical.spacing = 12
     }
 
     func addViews(){
@@ -78,7 +80,7 @@ class MovieCellView: UITableViewCell {
         let spacing = Constants.spacing
 
         movieImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(Constants.imageHeight)
+            make.height.equalTo(Constants.imageHeight)
         }
 
         stackViewHorizontal.snp.makeConstraints { make in
@@ -86,7 +88,13 @@ class MovieCellView: UITableViewCell {
             make.leading.equalTo(snp.leading).offset(spacing)
             make.trailing.equalTo(snp.trailing).offset(-spacing)
             make.bottom.equalTo(snp.bottom).offset(-spacing)
-            make.height.equalTo(Constants.cellHeight)
+        }
+
+        stackViewVertical.snp.makeConstraints { make in
+            make.top.equalTo(snp.top).offset(spacing)
+            make.leading.equalTo(movieImageView.snp.leading).offset(spacing)
+            make.trailing.equalTo(snp.trailing).offset(-spacing)
+            make.bottom.equalTo(snp.bottom).offset(-spacing)
         }
     }
 }
