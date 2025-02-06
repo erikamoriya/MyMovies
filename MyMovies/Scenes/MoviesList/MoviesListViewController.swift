@@ -30,7 +30,6 @@ class MoviesListViewController: UIViewController {
         super.loadView()
         myView.moviesList.delegate = self
         myView.moviesList.dataSource = self
-        myView.backgroundColor = .white
         view = myView
     }
 
@@ -44,7 +43,7 @@ class MoviesListViewController: UIViewController {
     private func loadData() async {
         do {
             let movies = try await service.getNowPlaying(router: .nowPlaying)
-            let viewModel = MoviesListViewModel(lastMovieImage: UIImage(systemName: Constants.movieImagePlaceholder) ?? UIImage(), lastMovieName: "teste")
+            let viewModel = MoviesListViewModel()
             myView.viewModel = viewModel
             moviesList.append(contentsOf: movies)
             myView.moviesList.reloadData()
@@ -56,7 +55,17 @@ class MoviesListViewController: UIViewController {
 
 extension MoviesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        debugPrint("clicouuuuuuuuuuuuu")
+        guard moviesList.count > indexPath.row else {
+            debugPrint("[MoviesListViewController] error getting cell info")
+            return
+        }
+        let movieId = moviesList[indexPath.row].id
+        let vc = MovieDetailsViewController(movieId: movieId)
+        present(vc, animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        Constants.cellHeight
     }
 }
 
@@ -64,7 +73,7 @@ extension MoviesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return moviesList.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             moviesList.count > indexPath.row,
@@ -73,17 +82,23 @@ extension MoviesListViewController: UITableViewDataSource {
             debugPrint("[MoviesListViewController] Error finding movie")
             return UITableViewCell()
         }
-        let movieImage = moviesList[indexPath.row].downloadImage(service: service)
-        let movieName = moviesList[indexPath.row].name
-        let movieDescription = moviesList[indexPath.row].synopsis
-        let cellViewModel = MovieCellViewModel(
-            movieImage: movieImage,
-            movieName: movieName,
-            movieDescription: movieDescription
-        )
 
-        cell.viewModel = cellViewModel
+        let movie = moviesList[indexPath.row]
+        let movieName = movie.name
+        let movieDescription = movie.synopsis
 
+        Task {
+            let image = await movie.downloadImage(service: service)
+            if let updatedCell = tableView.cellForRow(at: indexPath) as? MovieCellView {
+                let cellViewModel = MovieCellViewModel(
+                    movieImage: UIImage(),
+                    movieName: movieName,
+                    movieDescription: movieDescription
+                )
+                updatedCell.viewModel = cellViewModel
+                updatedCell.update()
+            }
+        }
         return cell
     }
 }
